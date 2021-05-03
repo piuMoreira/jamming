@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 @Entity
@@ -16,14 +17,15 @@ public class User {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;	
 	private String name;
-	private String cellphone;
-	private String instrument;
+	private String cellphone;	
 	private String email;
 	private String password;	
 	@OneToMany(mappedBy = "author")
 	private List<Post> posts;	
 	@ManyToMany(fetch = FetchType.EAGER)
 	private List<User> friends;
+	@ManyToOne
+	private Instrument instrument;
 	
 	public User(String name, String cellphone, String email, String password) {
 		this.name = name;
@@ -31,6 +33,8 @@ public class User {
 		this.email = email;
 		this.password = password;
 	}
+	
+	public User() {}
 	
 	public Long getId() {
 		return id;
@@ -50,10 +54,10 @@ public class User {
 	public void setCellphone(String cellphone) {
 		this.cellphone = cellphone;
 	}
-	public String getInstrument() {
+	public Instrument getInstrument() {
 		return instrument;
 	}
-	public void setInstrument(String instrument) {
+	public void setInstrument(Instrument instrument) {
 		this.instrument = instrument;
 	}
 	public List<Post> getPosts() {

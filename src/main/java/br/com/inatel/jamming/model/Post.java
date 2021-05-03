@@ -1,12 +1,19 @@
 package br.com.inatel.jamming.model;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -22,8 +29,12 @@ public class Post {
 	private User author;
 	@OneToMany(mappedBy = "post")
 	private List<Comment> comments;
-	@OneToMany(mappedBy = "post")
-	private List<Reaction> reactions;
+	
+	@ElementCollection
+	@JoinTable(name = "reactions", joinColumns = @JoinColumn(name ="user_ID"))
+	@Column(name = "reaction",nullable = false)
+	@Enumerated(EnumType.STRING)
+	private Collection<Reaction> reactions;
 	
 	public Post(String title, String message, User author) {
 		this.title = title;
@@ -31,6 +42,8 @@ public class Post {
 		this.author = author;
 		this.date = LocalDateTime.now();
 	}
+	
+	public Post() {}
 	
 	public Long getId() {
 		return id;
@@ -68,11 +81,11 @@ public class Post {
 	public void setComments(List<Comment> comments) {
 		this.comments = comments;
 	}
-	public List<Reaction> getReactions() {
+	public Collection<Reaction> getReactions() {
 		return reactions;
 	}
 
-	public void setReactions(List<Reaction> reactions) {
+	public void setReactions(Collection<Reaction> reactions) {
 		this.reactions = reactions;
 	}	
 	
