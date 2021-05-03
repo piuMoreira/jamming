@@ -13,7 +13,6 @@ public class PostDto {
 	private LocalDateTime date;
 	
 	public PostDto(Post post) {
-		super();
 		this.id = post.getId();
 		this.title = post.getTitle();
 		this.message = post.getMessage();

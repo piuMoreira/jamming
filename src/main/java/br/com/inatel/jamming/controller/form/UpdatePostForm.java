@@ -1,11 +1,18 @@
 package br.com.inatel.jamming.controller.form;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.Length;
+
 import br.com.inatel.jamming.controller.repository.PostRepository;
 import br.com.inatel.jamming.model.Post;
 
 public class UpdatePostForm {
 
+	@NotNull @NotEmpty @Length(min = 5)
 	private String title;
+	@NotNull @NotEmpty @Length(min = 10)
 	private String message;
 	
 	public String getTitle() {
