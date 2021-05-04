@@ -1,5 +1,7 @@
 package br.com.inatel.jamming.controller.form;
 
+import java.util.Optional;
+
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -16,7 +18,7 @@ public class PostForm {
 	@NotNull @NotEmpty @Length(min = 10)
 	private String message;
 	@NotNull @NotEmpty
-	private String author;
+	private String authorId;
 	
 	public String getTitle() {
 		return title;
@@ -30,16 +32,20 @@ public class PostForm {
 	public void setMessage(String message) {
 		this.message = message;
 	}
-	public String getAuthor() {
-		return author;
+	public String getAuthorId() {
+		return authorId;
 	}
-	public void setAuthor(String author) {
-		this.author = author;
+	public void setAuthor(String authorId) {
+		this.authorId = authorId;
 	}
 	public Post convert(UserRepository userRepository) {
-		User author = userRepository.findByName(this.author);
-		Post post = new Post(title, message, author);
-		return post;
+		Optional<User> optional = userRepository.findById(Long.parseLong(this.authorId));
+		if(optional.isPresent()) {
+			Post post = new Post(title, message, optional.get());
+			return post;			
+		} else {
+			return null;
+		}
 	}
 		
 }

@@ -1,9 +1,12 @@
 package br.com.inatel.jamming.model;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 
 @Entity
 public class Instrument {
@@ -13,6 +16,8 @@ public class Instrument {
 	private String name;
 	private String key;
 	private String family;
+	@ManyToMany(mappedBy = "instruments")
+	private List<User> players;
 	
 	public Instrument(String name, String key, String family) {
 		this.name = name;
@@ -20,6 +25,11 @@ public class Instrument {
 		this.family = family;
 	}
 	
+	public Instrument(String name) {
+		super();
+		this.name = name;
+	}
+
 	public Instrument() {}
 	
 	public String getName() {
@@ -40,19 +50,15 @@ public class Instrument {
 	public void setType(String family) {
 		this.family = family;
 	}
-
 	public Long getId() {
 		return id;
 	}
-
 	public void setId(Long id) {
 		this.id = id;
 	}
-
 	public void setKey(String key) {
 		this.key = key;
 	}
-
 	public void setFamily(String family) {
 		this.family = family;
 	}	

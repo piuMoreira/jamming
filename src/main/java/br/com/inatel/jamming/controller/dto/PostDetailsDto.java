@@ -22,8 +22,8 @@ public class PostDetailsDto {
 		this.message = post.getMessage();
 		this.date = post.getDate();
 		this.author = post.getAuthor().getName();
-		this.comments = new ArrayList<CommentDto>();
-		this.comments.addAll(post.getComments().stream().map(CommentDto::new).collect(Collectors.toList()));
+//		this.comments = new ArrayList<CommentDto>();
+//		this.comments.addAll(post.getComments().stream().map(CommentDto::new).collect(Collectors.toList()));
 	}
 	
 	public Long getId() {

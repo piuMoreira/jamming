@@ -1,5 +1,6 @@
 package br.com.inatel.jamming.controller.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import br.com.inatel.jamming.model.User;
@@ -8,8 +9,8 @@ public class UserDetailsDto {
 	private Long id;	
 	private String name;
 	private String cellphone;
-	private List<PostDto> posts;
-	private List<UserDto> friends;
+	private List<PostDto> posts = new ArrayList<PostDto>();
+	private List<UserDto> friends = new ArrayList<UserDto>();
 	private String instrument;
 	
 	public UserDetailsDto(User user) {
@@ -18,7 +19,7 @@ public class UserDetailsDto {
 		this.cellphone = user.getCellphone();
 		this.posts = PostDto.convert(user.getPosts());
 		this.friends = UserDto.convert(user.getFriends());
-		this.instrument = user.getInstrument().getName();
+//		this.instrument = user.getInstrument().getName();
 	}
 	
 	public Long getId() {

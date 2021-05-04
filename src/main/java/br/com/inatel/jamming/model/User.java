@@ -1,5 +1,6 @@
 package br.com.inatel.jamming.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -7,6 +8,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -24,14 +27,16 @@ public class User {
 	private List<Post> posts;	
 	@ManyToMany(fetch = FetchType.EAGER)
 	private List<User> friends;
-	@ManyToOne
-	private Instrument instrument;
+	@ManyToMany
+	@JoinTable(name = "user_instruments", joinColumns = @JoinColumn(name="user_id"), inverseJoinColumns = @JoinColumn(name="instrument_id"))
+	private List<Instrument> instruments = new ArrayList<Instrument>();
 	
-	public User(String name, String cellphone, String email, String password) {
+	public User(String name, String cellphone, String email, String password, String instrumentName) {
 		this.name = name;
 		this.cellphone = cellphone;
 		this.email = email;
 		this.password = password;
+		this.instruments.add(new Instrument(instrumentName));
 	}
 	
 	public User() {}
@@ -53,18 +58,23 @@ public class User {
 	}
 	public void setCellphone(String cellphone) {
 		this.cellphone = cellphone;
+	}	
+	public List<Instrument> getInstruments() {
+		return instruments;
 	}
-	public Instrument getInstrument() {
-		return instrument;
+
+	public void setInstruments(List<Instrument> instrument) {
+		this.instruments = instrument;
 	}
-	public void setInstrument(Instrument instrument) {
-		this.instrument = instrument;
-	}
+
 	public List<Post> getPosts() {
 		return posts;
 	}
 	public void setPosts(List<Post> posts) {
 		this.posts = posts;
+	}
+	public void addPost(Post post) {
+		this.posts.add(post);
 	}
 	public List<User> getFriends() {
 		return friends;
@@ -84,7 +94,9 @@ public class User {
 	public void setPassword(String password) {
 		this.password = password;
 	} 
-	
+	public void addFriend(User friend) {
+		this.friends.add(friend);
+	}
 	
 	
 }

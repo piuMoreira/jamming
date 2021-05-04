@@ -39,9 +39,9 @@ public class UserController {
 			return UserDto.convert(users);
 	}
 	
-	@GetMapping("/{id}")
-	public ResponseEntity<UserDetailsDto> searchUser(@PathVariable Long id) {
-		Optional<User> optional = userRepository.findById(id);
+	@GetMapping("/{userId}")
+	public ResponseEntity<UserDetailsDto> searchUser(@PathVariable Long userId) {
+		Optional<User> optional = userRepository.findById(userId);
 		if(optional.isPresent()) {
 			UserDetailsDto userDetails = new UserDetailsDto(optional.get());
 			return ResponseEntity.ok(userDetails);
@@ -52,32 +52,32 @@ public class UserController {
 	
 	@PostMapping
 	public ResponseEntity<UserDto> addUser(@RequestBody @Valid UserForm form, UriComponentsBuilder uriBuilder) {
-		User newUser = form.convert();
-		
-		URI uri = uriBuilder.path("/users/{id}").buildAndExpand(newUser.getId()).toUri();
+		User newUser = form.convert();		
+		userRepository.save(newUser);
+		URI uri = uriBuilder.path("/users/{userId}").buildAndExpand(newUser.getId()).toUri();
 		return ResponseEntity.created(uri).body(new UserDto(newUser));
 	}
 	
-	@PutMapping("/{id}")
+	@PutMapping("/{userId}")
 	@Transactional
-	public ResponseEntity<UserDto> updateUSer(@RequestBody @Valid UpdateUserForm form, @PathVariable Long id) {
-		Optional<User> optional = userRepository.findById(id);
+	public ResponseEntity<UserDto> updateUSer(@RequestBody @Valid UpdateUserForm form, @PathVariable Long userId) {
+		Optional<User> optional = userRepository.findById(userId);
 		
 		if(optional.isPresent()) {
-			User user = form.update(id, userRepository);
+			User user = form.update(userId, userRepository);
 			return ResponseEntity.ok(new UserDto(user));
 		}
 		
 		return ResponseEntity.notFound().build();
 	}
 	
-	@DeleteMapping("/{id}")
+	@DeleteMapping("/{userId}")
 	@Transactional
-	public ResponseEntity<?> deleteUser(@PathVariable Long id) {
-		Optional<User> optional = userRepository.findById(id);
+	public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
+		Optional<User> optional = userRepository.findById(userId);
 		
 		if(optional.isPresent()) {
-			userRepository.deleteById(id);
+			userRepository.deleteById(userId);
 			return ResponseEntity.ok().build();
 		}
 		

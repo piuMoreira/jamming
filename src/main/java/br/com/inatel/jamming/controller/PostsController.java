@@ -38,7 +38,7 @@ public class PostsController {
 	private UserRepository userRepository;
 	
 	@GetMapping
-	public List<PostDto> listPosts(String authorName) {
+	public  List<PostDto> listPosts(String authorName) {
 		if(authorName == null) {
 			List<Post> posts = postRepository.findAll();
 			return PostDto.convert(posts);
@@ -46,6 +46,15 @@ public class PostsController {
 			List<Post> posts = postRepository.findByAuthorName(authorName);
 			return PostDto.convert(posts);
 		}		
+	}
+	
+	@GetMapping("/{postId}")
+	public ResponseEntity<PostDetailsDto> postDetails(@PathVariable Long postId) {
+		Optional<Post> optional = postRepository.findById(postId);		
+		if(optional.isPresent()) {
+			return ResponseEntity.ok(new PostDetailsDto(optional.get()));
+		}		
+		return ResponseEntity.notFound().build();
 	}
 	
 	@PostMapping
@@ -57,37 +66,26 @@ public class PostsController {
 		return ResponseEntity.created(uri).body(new PostDto(newPost));
 	}
 	
-	@GetMapping("/{id}")
-	public ResponseEntity<PostDetailsDto> postDetails(@PathVariable Long id) {
-		Optional<Post> optional = postRepository.findById(id);
-		
-		if(optional.isPresent()) {
-			return ResponseEntity.ok(new PostDetailsDto(optional.get()));
-		}
-		
-		return ResponseEntity.notFound().build();
-	}
-	
-	@PutMapping("/{id}")
+	@PutMapping("/{postId}")
 	@Transactional
-	public ResponseEntity<PostDto> updatePost(@RequestBody @Valid UpdatePostForm form, @PathVariable Long id){
-		Optional<Post> optional = postRepository.findById(id);
+	public ResponseEntity<PostDto> updatePost(@RequestBody @Valid UpdatePostForm form, @PathVariable Long postId){
+		Optional<Post> optional = postRepository.findById(postId);
 		
 		if(optional.isPresent()) {
-			Post post = form.update(id, postRepository);
+			Post post = form.update(postId, postRepository);
 			return ResponseEntity.ok(new PostDto(post));
 		}
 				
 		return ResponseEntity.notFound().build();
 	}
 	
-	@DeleteMapping("/{id}")
+	@DeleteMapping("/{postId}")
 	@Transactional
-	public ResponseEntity<?> deletePost(@PathVariable Long id) {
-		Optional<Post> optional = postRepository.findById(id);
+	public ResponseEntity<?> deletePost(@PathVariable Long postId) {
+		Optional<Post> optional = postRepository.findById(postId);
 		
 		if(optional.isPresent()) {
-			postRepository.deleteById(id);
+			postRepository.deleteById(postId);
 			return ResponseEntity.ok().build();
 		}
 				
