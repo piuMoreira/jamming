@@ -16,8 +16,8 @@ public class Instrument {
 	private String name;
 	private String key;
 	private String family;
-	@ManyToMany(mappedBy = "instruments")
-	private List<User> players;
+//	@ManyToMany(mappedBy = "instruments")
+//	private List<User> players;
 	
 	public Instrument(String name, String key, String family) {
 		this.name = name;

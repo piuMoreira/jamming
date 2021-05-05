@@ -44,6 +44,8 @@ public class FriendController {
 			User user = form.convert(userRepository);
 			optional.get().addFriend(user);
 			user.addFriend(optional.get());
+			userRepository.save(optional.get());
+			userRepository.save(user);
 			return ResponseEntity.ok(new UserDto(user));
 		}
 		return ResponseEntity.notFound().build();		
@@ -54,8 +56,10 @@ public class FriendController {
 		Optional<User> optional1 = userRepository.findById(userId);
 		Optional<User> optional2 = userRepository.findById(friendId);
 		if(optional1.isPresent() && optional2.isPresent()) {
-			optional1.get().getFriends().remove(optional2.get());
-			optional2.get().getFriends().remove(optional1.get());
+			optional1.get().removeFriend(optional2.get());
+			optional2.get().removeFriend(optional1.get());
+			userRepository.save(optional1.get());
+			userRepository.save(optional2.get());
 			return ResponseEntity.ok().build();
 		}
 		return ResponseEntity.ok().build();

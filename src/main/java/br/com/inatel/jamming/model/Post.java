@@ -1,6 +1,7 @@
 package br.com.inatel.jamming.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class Post {
 	@ManyToOne
 	private User author;
 	@OneToMany(mappedBy = "post")
-	private List<Comment> comments;
+	private List<Comment> comments = new ArrayList<Comment>();
 	
 	@ElementCollection
 	@JoinTable(name = "reactions", joinColumns = @JoinColumn(name ="user_ID"))

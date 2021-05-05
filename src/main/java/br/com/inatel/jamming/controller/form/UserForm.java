@@ -17,8 +17,6 @@ public class UserForm {
 	private String email;
 	@NotNull @NotEmpty @Length(min = 5)
 	private String password;
-	@NotNull @NotEmpty 
-	private String instrumentName;
 	
 	
 	public String getPassword() {
@@ -44,9 +42,9 @@ public class UserForm {
 	}
 	public void setEmail(String email) {
 		this.email = email;
-	}
+	}	
 	public User convert() {
-		return new User(name,cellphone,email,password,instrumentName);
+		return new User(name,cellphone,email,password);
 	}
 	
 	
