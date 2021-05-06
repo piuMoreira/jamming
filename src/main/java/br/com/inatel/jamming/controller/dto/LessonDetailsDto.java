@@ -2,8 +2,12 @@ package br.com.inatel.jamming.controller.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import br.com.inatel.jamming.model.Lesson;
+import br.com.inatel.jamming.model.User;
 
 public class LessonDetailsDto {
 
@@ -13,7 +17,9 @@ public class LessonDetailsDto {
 	private String instrumentName;
 	private LocalDateTime date;
 	private String author;
-	private BigDecimal price;
+	private Long price;
+	private List<CommentDto> comments;
+	private List<UserDto> students;
 	
 	public LessonDetailsDto(Lesson lesson) {
 		this.id = lesson.getId();
@@ -23,6 +29,11 @@ public class LessonDetailsDto {
 		this.date = lesson.getDate();
 		this.author = lesson.getAuthor().getName();
 		this.price = lesson.getPrice();
+		this.comments = new ArrayList<CommentDto>(); 
+		this.comments.addAll(lesson.getComments().stream().map(CommentDto::new).collect(Collectors.toList()));
+		this.students = new ArrayList<UserDto>();
+		this.students.addAll(lesson.getStudents().stream().map(UserDto::new).collect(Collectors.toList()));
+		
 	}
 
 	public Long getId() {
@@ -49,8 +60,16 @@ public class LessonDetailsDto {
 		return author;
 	}
 
-	public BigDecimal getPrice() {
+	public Long getPrice() {
 		return price;
+	}
+
+	public List<CommentDto> getComments() {
+		return comments;
+	}
+
+	public List<UserDto> getStudents() {
+		return students;
 	}
 	
 	

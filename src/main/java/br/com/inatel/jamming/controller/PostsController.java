@@ -37,6 +37,7 @@ public class PostsController {
 	@Autowired
 	private UserRepository userRepository;
 	
+	
 	@GetMapping
 	public  List<PostDto> listPosts(String authorName) {
 		if(authorName == null) {

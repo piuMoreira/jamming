@@ -1,5 +1,6 @@
 package br.com.inatel.jamming.controller.dto;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +12,8 @@ public class UserDetailsDto {
 	private String cellphone;
 	private List<PostDto> posts = new ArrayList<PostDto>();
 	private List<UserDto> friends = new ArrayList<UserDto>();
-	private String instrument;
+	private long credits;
+	private List<LessonDto> lessons = new ArrayList<LessonDto>();
 	
 	public UserDetailsDto(User user) {
 		this.id = user.getId();
@@ -19,7 +21,8 @@ public class UserDetailsDto {
 		this.cellphone = user.getCellphone();
 		this.posts = PostDto.convert(user.getPosts());
 		this.friends = UserDto.convert(user.getFriends());
-//		this.instrument = user.getInstrument().getName();
+		this.credits = user.getCredits();
+		this.lessons = LessonDto.convert(user.getLessons());
 	}
 	
 	public Long getId() {
@@ -37,9 +40,15 @@ public class UserDetailsDto {
 	public List<UserDto> getFriends() {
 		return friends;
 	}
-	public String getInstrument() {
-		return instrument;
+
+	public long getCredits() {
+		return credits;
 	}
+
+	public List<LessonDto> getLessons() {
+		return lessons;
+	}
+	
 	
 	
 }

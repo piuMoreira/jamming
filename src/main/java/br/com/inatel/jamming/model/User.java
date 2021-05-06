@@ -1,5 +1,6 @@
 package br.com.inatel.jamming.model;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -7,12 +8,12 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "Users")
 public class User {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,8 +22,11 @@ public class User {
 	private String cellphone;	
 	private String email;
 	private String password;	
+	private long credits;
 	@OneToMany(mappedBy = "author")
 	private List<Post> posts;	
+	@OneToMany(mappedBy = "author")
+	private List<Comment> comments;
 	@ManyToMany(fetch = FetchType.EAGER)
 	private List<User> friends;
 	@ManyToMany
@@ -33,6 +37,7 @@ public class User {
 		this.cellphone = cellphone;
 		this.email = email;
 		this.password = password;
+		this.credits = 0;
 	}
 	
 	public User() {}
@@ -88,5 +93,29 @@ public class User {
 	public void removeFriend(User user) {
 		this.friends.remove(user);
 	}
+
+	public long getCredits() {
+		return credits;
+	}
+	public void setCredits(long credits) {
+		this.credits = credits;
+	}
+	public void addCredits(long credits) {
+		this.credits += credits;
+	}
+	public void subCredits(long credits) {
+		this.credits -= credits;
+		System.out.println("cred: " + this.credits);
+	}
+	public List<Lesson> getLessons() {
+		return lessons;
+	}
+	public void setLessons(List<Lesson> lessons) {
+		this.lessons = lessons;
+	}
+	public void addLesson(Lesson lesson) {
+		this.lessons.add(lesson);
+	}
+	
 	
 }

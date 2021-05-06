@@ -20,11 +20,15 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.inatel.jamming.controller.dto.LessonDetailsDto;
 import br.com.inatel.jamming.controller.dto.LessonDto;
+import br.com.inatel.jamming.controller.dto.UserDto;
 import br.com.inatel.jamming.controller.form.LessonForm;
+import br.com.inatel.jamming.controller.form.StudentForm;
 import br.com.inatel.jamming.controller.form.UpdateLessonForm;
 import br.com.inatel.jamming.controller.repository.LessonRepository;
+import br.com.inatel.jamming.controller.repository.PostRepository;
 import br.com.inatel.jamming.controller.repository.UserRepository;
 import br.com.inatel.jamming.model.Lesson;
+import br.com.inatel.jamming.model.User;
 
 @RestController
 @RequestMapping("/lessons")
@@ -66,6 +70,24 @@ public class LessonController {
 		
 		URI uri = uriBuilder.path("/lessons/{id}").buildAndExpand(lesson.getId()).toUri();
 		return ResponseEntity.created(uri).body(new LessonDto(lesson));
+	}
+	
+	@PutMapping("/add/{lessonId}")
+	public ResponseEntity<?> addStudent(@RequestBody @Valid StudentForm form, @PathVariable Long lessonId) {
+		User user = form.convert(userRepository);
+		Lesson lesson = lessonRepository.getOne(lessonId);
+		
+		if(user.getCredits() >= lesson.getPrice()) {
+			System.out.println("entrou");
+				user.subCredits(lesson.getPrice());
+				lesson.getAuthor().addCredits(lesson.getPrice());
+				user.addLesson(lesson);
+				lesson.addStudent(user);
+				lessonRepository.save(lesson);
+				System.out.println(user.getCredits());
+			return ResponseEntity.ok().build();
+		}
+		return ResponseEntity.badRequest().build();
 	}
 	
 	@PutMapping("/{lessonId}")

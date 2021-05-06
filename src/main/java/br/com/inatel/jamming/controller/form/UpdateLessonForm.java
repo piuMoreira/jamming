@@ -22,7 +22,7 @@ public class UpdateLessonForm {
 		Lesson lessonUpdate = lesson;
 		lessonUpdate.setTitle(this.title);
 		lessonUpdate.setMessage(this.message);
-		lessonUpdate.setPrice(new BigDecimal(price));
+		lessonUpdate.setPrice(Long.parseLong(price));
 		return lessonUpdate;
 	}
 	

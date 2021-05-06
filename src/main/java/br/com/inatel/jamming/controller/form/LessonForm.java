@@ -57,7 +57,7 @@ public class LessonForm {
 	}
 	public Lesson convert(UserRepository userRepository) {
 		User user = userRepository.findByName(author);
-		BigDecimal price = new BigDecimal(this.price);
+		long price = Long.parseLong(this.price);
 		Instrument instrument = new Instrument(this.instrument);
 		
 		Lesson lesson = new Lesson(title, message, user, price, instrument);

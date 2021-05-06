@@ -21,7 +21,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.inatel.jamming.controller.dto.UserDetailsDto;
 import br.com.inatel.jamming.controller.dto.UserDto;
-import br.com.inatel.jamming.controller.form.UpdateUserForm;
+import br.com.inatel.jamming.controller.form.UpdateUserInfoForm;
 import br.com.inatel.jamming.controller.form.UserForm;
 import br.com.inatel.jamming.controller.repository.UserRepository;
 import br.com.inatel.jamming.model.User;
@@ -60,7 +60,7 @@ public class UserController {
 	
 	@PutMapping("/{userId}")
 	@Transactional
-	public ResponseEntity<UserDto> updateUSer(@RequestBody @Valid UpdateUserForm form, @PathVariable Long userId) {
+	public ResponseEntity<UserDto> updateUSer(@RequestBody @Valid UpdateUserInfoForm form, @PathVariable Long userId) {
 		Optional<User> optional = userRepository.findById(userId);
 		
 		if(optional.isPresent()) {
