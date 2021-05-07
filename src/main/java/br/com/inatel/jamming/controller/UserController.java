@@ -8,12 +8,14 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,6 +36,7 @@ public class UserController {
 	private UserRepository userRepository;
 	
 	@GetMapping
+	@Cacheable(value = "listUsers")
 	public List<UserDto> listUsers() {
 			List<User> users = userRepository.findAll();
 			return UserDto.convert(users);
@@ -51,6 +54,8 @@ public class UserController {
 	}
 	
 	@PostMapping
+	@Transactional
+	@CacheEvict(value = "listUsers", allEntries = true)
 	public ResponseEntity<UserDto> addUser(@RequestBody @Valid UserForm form, UriComponentsBuilder uriBuilder) {
 		User newUser = form.convert();		
 		userRepository.save(newUser);
@@ -58,8 +63,9 @@ public class UserController {
 		return ResponseEntity.created(uri).body(new UserDto(newUser));
 	}
 	
-	@PutMapping("/{userId}")
+	@PatchMapping("/{userId}")
 	@Transactional
+	@CacheEvict(value = "listUsers", allEntries = true)
 	public ResponseEntity<UserDto> updateUSer(@RequestBody @Valid UpdateUserInfoForm form, @PathVariable Long userId) {
 		Optional<User> optional = userRepository.findById(userId);
 		
@@ -73,6 +79,7 @@ public class UserController {
 	
 	@DeleteMapping("/{userId}")
 	@Transactional
+	@CacheEvict(value = "listUsers", allEntries = true)
 	public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
 		Optional<User> optional = userRepository.findById(userId);
 		

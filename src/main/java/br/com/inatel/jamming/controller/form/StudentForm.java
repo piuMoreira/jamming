@@ -29,7 +29,7 @@ public class StudentForm {
 	}
 	
 	public User convert(UserRepository userRepository) {
-		return userRepository.findByName(name);
+		return userRepository.findByName(name).get();
 	}
 	
 }

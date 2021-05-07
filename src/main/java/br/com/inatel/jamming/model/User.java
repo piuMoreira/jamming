@@ -1,8 +1,10 @@
 package br.com.inatel.jamming.model;
 
-import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -12,14 +14,20 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 @Entity
 @Table(name = "Users")
-public class User {
+public class User implements UserDetails {
 
+	private static final long serialVersionUID = 1L;
+	
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;	
 	private String name;
-	private String cellphone;	
+	private String cellphone;
+	@Column(unique = true)
 	private String email;
 	private String password;	
 	private long credits;
@@ -29,8 +37,11 @@ public class User {
 	private List<Comment> comments;
 	@ManyToMany(fetch = FetchType.EAGER)
 	private List<User> friends;
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER)
 	private List<Lesson> lessons;
+	
+	@ManyToMany(fetch = FetchType.EAGER)
+	private List<Profile> profiles = new ArrayList<>();
 	
 	public User(String name, String cellphone, String email, String password) {
 		this.name = name;
@@ -105,7 +116,6 @@ public class User {
 	}
 	public void subCredits(long credits) {
 		this.credits -= credits;
-		System.out.println("cred: " + this.credits);
 	}
 	public List<Lesson> getLessons() {
 		return lessons;
@@ -115,6 +125,36 @@ public class User {
 	}
 	public void addLesson(Lesson lesson) {
 		this.lessons.add(lesson);
+	}
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return this.profiles;
+	}
+
+	@Override
+	public String getUsername() {
+		return this.email;
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
 	}
 	
 	

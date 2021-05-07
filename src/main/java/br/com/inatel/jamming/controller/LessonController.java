@@ -4,15 +4,18 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,12 +23,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.inatel.jamming.controller.dto.LessonDetailsDto;
 import br.com.inatel.jamming.controller.dto.LessonDto;
-import br.com.inatel.jamming.controller.dto.UserDto;
 import br.com.inatel.jamming.controller.form.LessonForm;
 import br.com.inatel.jamming.controller.form.StudentForm;
 import br.com.inatel.jamming.controller.form.UpdateLessonForm;
 import br.com.inatel.jamming.controller.repository.LessonRepository;
-import br.com.inatel.jamming.controller.repository.PostRepository;
 import br.com.inatel.jamming.controller.repository.UserRepository;
 import br.com.inatel.jamming.model.Lesson;
 import br.com.inatel.jamming.model.User;
@@ -42,6 +43,7 @@ public class LessonController {
 	
 	
 	@GetMapping
+	@Cacheable(value = "listLessons")
 	public List<LessonDto> listLessons(String instrumentName) {
 		if(instrumentName == null) {
 			List<Lesson> lessons = lessonRepository.findAll();
@@ -64,6 +66,8 @@ public class LessonController {
 	}
 	
 	@PostMapping
+	@Transactional
+	@CacheEvict(value = "listLessons", allEntries = true)
 	public ResponseEntity<LessonDto> addLesson(@RequestBody @Valid LessonForm form, UriComponentsBuilder uriBuilder) {
 		Lesson lesson = form.convert(userRepository);
 		lessonRepository.save(lesson);
@@ -72,25 +76,26 @@ public class LessonController {
 		return ResponseEntity.created(uri).body(new LessonDto(lesson));
 	}
 	
-	@PutMapping("/add/{lessonId}")
+	@PatchMapping("/add/{lessonId}")
+	@Transactional
+	@CacheEvict(value = "listUsers", allEntries = true)
 	public ResponseEntity<?> addStudent(@RequestBody @Valid StudentForm form, @PathVariable Long lessonId) {
 		User user = form.convert(userRepository);
 		Lesson lesson = lessonRepository.getOne(lessonId);
 		
 		if(user.getCredits() >= lesson.getPrice()) {
-			System.out.println("entrou");
 				user.subCredits(lesson.getPrice());
 				lesson.getAuthor().addCredits(lesson.getPrice());
 				user.addLesson(lesson);
 				lesson.addStudent(user);
-				lessonRepository.save(lesson);
-				System.out.println(user.getCredits());
 			return ResponseEntity.ok().build();
 		}
 		return ResponseEntity.badRequest().build();
 	}
 	
-	@PutMapping("/{lessonId}")
+	@PatchMapping("/{lessonId}")
+	@Transactional
+	@CacheEvict(value = "listUsers", allEntries = true)
 	public ResponseEntity<LessonDto> updateLesson(@RequestBody @Valid UpdateLessonForm form, @PathVariable Long lessonId) {
 		Optional<Lesson> optional = lessonRepository.findById(lessonId);
 		
@@ -104,6 +109,8 @@ public class LessonController {
 	
 	
 	@DeleteMapping("/{lessonId}")
+	@Transactional
+	@CacheEvict(value = "listUsers", allEntries = true)
 	public ResponseEntity<?> deleteLesson(@PathVariable Long lessonId) {
 		Optional<Lesson> optional = lessonRepository.findById(lessonId);
 		

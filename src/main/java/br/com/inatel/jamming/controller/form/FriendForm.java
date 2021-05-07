@@ -1,5 +1,7 @@
 package br.com.inatel.jamming.controller.form;
 
+import java.util.Optional;
+
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -28,8 +30,11 @@ public class FriendForm {
 		this.cellphone = cellphone;
 	}
 	public User convert(UserRepository userRepository) {
-		User user = userRepository.findByName(name);
-		return user;
+		Optional<User> optional = userRepository.findByName(name);
+		if(optional.isPresent()) {
+			return optional.get();
+		}
+		return null;
 	}
 	
 	

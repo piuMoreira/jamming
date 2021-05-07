@@ -4,6 +4,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import br.com.inatel.jamming.model.User;
 
@@ -44,7 +45,9 @@ public class UserForm {
 		this.email = email;
 	}	
 	public User convert() {
-		return new User(name,cellphone,email,password);
+		String encryptedPassword = new BCryptPasswordEncoder().encode(password);
+		return new User(name,cellphone,email,encryptedPassword);
+//		return new User(name,cellphone,email,password);
 	}
 	
 	

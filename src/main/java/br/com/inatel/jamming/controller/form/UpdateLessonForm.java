@@ -1,7 +1,5 @@
 package br.com.inatel.jamming.controller.form;
 
-import java.math.BigDecimal;
-
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 

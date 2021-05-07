@@ -1,6 +1,6 @@
 package br.com.inatel.jamming.controller.form;
 
-import java.math.BigDecimal;
+import java.util.Optional;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -56,12 +56,15 @@ public class LessonForm {
 		this.instrument = instrument;
 	}
 	public Lesson convert(UserRepository userRepository) {
-		User user = userRepository.findByName(author);
-		long price = Long.parseLong(this.price);
-		Instrument instrument = new Instrument(this.instrument);
-		
-		Lesson lesson = new Lesson(title, message, user, price, instrument);
-		return lesson;
+		Optional<User> user = userRepository.findByName(author);
+		if(user.isPresent()) {
+			long price = Long.parseLong(this.price);
+			Instrument instrument = new Instrument(this.instrument);
+			
+			Lesson lesson = new Lesson(title, message, user.get(), price, instrument);
+			return lesson;
+		}
+		return null;
 	}
 	
 	

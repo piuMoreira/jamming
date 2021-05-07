@@ -4,6 +4,7 @@ package br.com.inatel.jamming.controller;
 import java.net.URI;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,7 @@ public class CommentController {
 	private UserRepository userRepository;
 	
 	@PostMapping
+	@Transactional
 	public ResponseEntity<CommentDto> addCommentToPost(@RequestBody @Valid CommentForm form, UriComponentsBuilder uriBuilder) {
 			Comment comment = form.convert(userRepository, postRepository);
 			comment.getPost().addComment(comment);
@@ -48,6 +50,7 @@ public class CommentController {
 	}
 	
 	@DeleteMapping("/{commentId}")
+	@Transactional
 	public ResponseEntity<?> deleteComment(@PathVariable Long commentId) {
 		Optional<Comment> optional = commentRepository.findById(commentId);
 		
