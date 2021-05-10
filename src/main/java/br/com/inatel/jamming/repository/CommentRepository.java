@@ -1,4 +1,4 @@
-package br.com.inatel.jamming.controller.repository;
+package br.com.inatel.jamming.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

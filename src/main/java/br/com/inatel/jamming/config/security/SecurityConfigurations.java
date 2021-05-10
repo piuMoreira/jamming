@@ -14,7 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import br.com.inatel.jamming.controller.repository.UserRepository;
+import br.com.inatel.jamming.repository.UserRepository;
 
 @EnableWebSecurity
 @Configuration

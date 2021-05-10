@@ -6,11 +6,11 @@ import org.hibernate.validator.constraints.Length;
 
 import com.sun.istack.NotNull;
 
-import br.com.inatel.jamming.controller.repository.PostRepository;
-import br.com.inatel.jamming.controller.repository.UserRepository;
 import br.com.inatel.jamming.model.Comment;
 import br.com.inatel.jamming.model.Post;
 import br.com.inatel.jamming.model.User;
+import br.com.inatel.jamming.repository.PostRepository;
+import br.com.inatel.jamming.repository.UserRepository;
 
 public class CommentForm {
 

@@ -12,7 +12,7 @@ public class UserDetailsDto {
 	private List<PostDto> posts = new ArrayList<PostDto>();
 	private List<UserDto> friends = new ArrayList<UserDto>();
 	private long credits;
-	private List<LessonDto> lessons = new ArrayList<LessonDto>();
+	private List<LessonDto> boughtLessons = new ArrayList<LessonDto>();
 	
 	public UserDetailsDto(User user) {
 		this.id = user.getId();
@@ -21,7 +21,7 @@ public class UserDetailsDto {
 		this.posts = PostDto.convert(user.getPosts());
 		this.friends = UserDto.convert(user.getFriends());
 		this.credits = user.getCredits();
-		this.lessons = LessonDto.convert(user.getLessons());
+		this.boughtLessons = LessonDto.convert(user.getBoughtLessons());
 	}
 	
 	public Long getId() {
@@ -39,13 +39,11 @@ public class UserDetailsDto {
 	public List<UserDto> getFriends() {
 		return friends;
 	}
-
 	public long getCredits() {
 		return credits;
 	}
-
-	public List<LessonDto> getLessons() {
-		return lessons;
+	public List<LessonDto> getboughtLessons() {
+		return boughtLessons;
 	}
 	
 	

@@ -25,8 +25,8 @@ import br.com.inatel.jamming.controller.dto.UserDetailsDto;
 import br.com.inatel.jamming.controller.dto.UserDto;
 import br.com.inatel.jamming.controller.form.UpdateUserInfoForm;
 import br.com.inatel.jamming.controller.form.UserForm;
-import br.com.inatel.jamming.controller.repository.UserRepository;
 import br.com.inatel.jamming.model.User;
+import br.com.inatel.jamming.repository.UserRepository;
 
 @RestController
 @RequestMapping("/users")

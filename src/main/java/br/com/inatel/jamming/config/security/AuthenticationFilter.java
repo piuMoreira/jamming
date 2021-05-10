@@ -11,8 +11,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import br.com.inatel.jamming.controller.repository.UserRepository;
 import br.com.inatel.jamming.model.User;
+import br.com.inatel.jamming.repository.UserRepository;
 
 public class AuthenticationFilter extends OncePerRequestFilter {
 

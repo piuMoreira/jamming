@@ -5,8 +5,8 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
 
-import br.com.inatel.jamming.controller.repository.PostRepository;
 import br.com.inatel.jamming.model.Post;
+import br.com.inatel.jamming.repository.PostRepository;
 
 public class UpdatePostForm {
 

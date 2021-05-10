@@ -19,10 +19,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.inatel.jamming.controller.dto.CommentDto;
 import br.com.inatel.jamming.controller.form.CommentForm;
-import br.com.inatel.jamming.controller.repository.CommentRepository;
-import br.com.inatel.jamming.controller.repository.PostRepository;
-import br.com.inatel.jamming.controller.repository.UserRepository;
 import br.com.inatel.jamming.model.Comment;
+import br.com.inatel.jamming.repository.CommentRepository;
+import br.com.inatel.jamming.repository.PostRepository;
+import br.com.inatel.jamming.repository.UserRepository;
 
 @RestController
 @RequestMapping("/comments")

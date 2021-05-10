@@ -8,8 +8,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import br.com.inatel.jamming.controller.repository.UserRepository;
 import br.com.inatel.jamming.model.User;
+import br.com.inatel.jamming.repository.UserRepository;
 
 @Service
 public class AuthenticationService implements UserDetailsService {

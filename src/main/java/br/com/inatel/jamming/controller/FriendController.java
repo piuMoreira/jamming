@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.inatel.jamming.controller.dto.UserDto;
 import br.com.inatel.jamming.controller.form.FriendForm;
-import br.com.inatel.jamming.controller.repository.UserRepository;
 import br.com.inatel.jamming.model.User;
+import br.com.inatel.jamming.repository.UserRepository;
 
 @RestController
 @RequestMapping("/friends")

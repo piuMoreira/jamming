@@ -1,7 +1,9 @@
 package br.com.inatel.jamming.controller;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -18,16 +20,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.inatel.jamming.controller.dto.PostDetailsDto;
 import br.com.inatel.jamming.controller.dto.PostDto;
-import br.com.inatel.jamming.controller.form.PostForm;
 import br.com.inatel.jamming.controller.form.UpdatePostForm;
-import br.com.inatel.jamming.controller.repository.PostRepository;
-import br.com.inatel.jamming.controller.repository.UserRepository;
 import br.com.inatel.jamming.model.Post;
+import br.com.inatel.jamming.model.User;
+import br.com.inatel.jamming.repository.PostRepository;
+import br.com.inatel.jamming.repository.UserRepository;
+import br.com.inatel.jamming.service.cloudinary.CloudinaryService;
 
 @RestController
 @RequestMapping("/posts")
@@ -39,6 +44,8 @@ public class PostsController {
 	@Autowired
 	private UserRepository userRepository;
 	
+	@Autowired
+	private CloudinaryService cloudinaryService;
 	
 	@GetMapping
 	@Cacheable(value = "listPosts")
@@ -65,10 +72,20 @@ public class PostsController {
 	@PostMapping
 	@Transactional
 	@CacheEvict(value = "listPosts", allEntries = true)
-	public ResponseEntity<PostDto> addPost(@RequestBody @Valid PostForm form, UriComponentsBuilder uriBuilder) {
-		Post newPost = form.convert(userRepository);
-		postRepository.save(newPost);
+	public ResponseEntity<PostDto> addPost(@RequestParam("title") String title, @RequestParam("message") String message,
+								@RequestParam("userId") Long userId, UriComponentsBuilder uriBuilder,
+								@RequestParam("file") MultipartFile file) throws IOException {
 		
+		String url = "";
+		if (file != null) {
+			Map uploadResult = cloudinaryService.upload(file, "image", "image");
+			url = uploadResult.get("public_id").toString() + "." + uploadResult.get("format").toString();
+		}
+		
+		User user = userRepository.getOne(userId);
+		Post newPost = new Post(title, message, user, url);
+		
+		postRepository.save(newPost);
 		URI uri = uriBuilder.path("/posts/{id}").buildAndExpand(newPost.getId()).toUri();
 		return ResponseEntity.created(uri).body(new PostDto(newPost));
 	}

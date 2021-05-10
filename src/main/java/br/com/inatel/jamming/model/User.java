@@ -38,7 +38,7 @@ public class User implements UserDetails {
 	@ManyToMany(fetch = FetchType.EAGER)
 	private List<User> friends;
 	@ManyToMany(fetch = FetchType.EAGER)
-	private List<Lesson> lessons;
+	private List<Lesson> boughtLessons;
 	
 	@ManyToMany(fetch = FetchType.EAGER)
 	private List<Profile> profiles = new ArrayList<>();
@@ -117,14 +117,14 @@ public class User implements UserDetails {
 	public void subCredits(long credits) {
 		this.credits -= credits;
 	}
-	public List<Lesson> getLessons() {
-		return lessons;
+	public List<Lesson> getBoughtLessons() {
+		return boughtLessons;
 	}
-	public void setLessons(List<Lesson> lessons) {
-		this.lessons = lessons;
+	public void setBoughtLessons(List<Lesson> boughtLessons) {
+		this.boughtLessons = boughtLessons;
 	}
-	public void addLesson(Lesson lesson) {
-		this.lessons.add(lesson);
+	public void addBoughtLessons(Lesson boughtLessons) {
+		this.boughtLessons.add(boughtLessons);
 	}
 
 	@Override

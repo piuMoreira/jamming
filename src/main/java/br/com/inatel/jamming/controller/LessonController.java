@@ -26,10 +26,10 @@ import br.com.inatel.jamming.controller.dto.LessonDto;
 import br.com.inatel.jamming.controller.form.LessonForm;
 import br.com.inatel.jamming.controller.form.StudentForm;
 import br.com.inatel.jamming.controller.form.UpdateLessonForm;
-import br.com.inatel.jamming.controller.repository.LessonRepository;
-import br.com.inatel.jamming.controller.repository.UserRepository;
 import br.com.inatel.jamming.model.Lesson;
 import br.com.inatel.jamming.model.User;
+import br.com.inatel.jamming.repository.LessonRepository;
+import br.com.inatel.jamming.repository.UserRepository;
 
 @RestController
 @RequestMapping("/lessons")
@@ -86,7 +86,7 @@ public class LessonController {
 		if(user.getCredits() >= lesson.getPrice()) {
 				user.subCredits(lesson.getPrice());
 				lesson.getAuthor().addCredits(lesson.getPrice());
-				user.addLesson(lesson);
+				user.addBoughtLessons(lesson);
 				lesson.addStudent(user);
 			return ResponseEntity.ok().build();
 		}

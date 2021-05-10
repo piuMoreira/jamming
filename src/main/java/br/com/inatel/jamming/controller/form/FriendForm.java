@@ -7,8 +7,8 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
 
-import br.com.inatel.jamming.controller.repository.UserRepository;
 import br.com.inatel.jamming.model.User;
+import br.com.inatel.jamming.repository.UserRepository;
 
 public class FriendForm {
 

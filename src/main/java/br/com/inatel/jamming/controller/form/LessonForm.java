@@ -7,10 +7,10 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
 
-import br.com.inatel.jamming.controller.repository.UserRepository;
 import br.com.inatel.jamming.model.Instrument;
 import br.com.inatel.jamming.model.Lesson;
 import br.com.inatel.jamming.model.User;
+import br.com.inatel.jamming.repository.UserRepository;
 
 public class LessonForm {
 
