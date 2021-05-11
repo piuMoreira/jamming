@@ -13,7 +13,8 @@ public class PostDetailsDto {
 	private String message;
 	private LocalDateTime date;
 	private String author;
-	private List<CommentDto> comments;
+	private String annexUrl;
+	private List<CommentDto> comments;	
 	
 	public PostDetailsDto(Post post) {
 		this.id = post.getId();
@@ -23,6 +24,7 @@ public class PostDetailsDto {
 		this.author = post.getAuthor().getName();
 		this.comments = new ArrayList<CommentDto>();
 		this.comments.addAll(post.getComments().stream().map(CommentDto::new).collect(Collectors.toList()));
+		this.annexUrl = post.getAnnexUrl();
 	}
 	
 	public Long getId() {
@@ -42,6 +44,9 @@ public class PostDetailsDto {
 	}
 	public List<CommentDto> getComments() {
 		return comments;
+	}
+	public String getAnnexUrl() {
+		return annexUrl;
 	}
 	
 }

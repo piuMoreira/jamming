@@ -12,6 +12,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -58,7 +59,9 @@ public class UserController {
 	@Transactional
 	@CacheEvict(value = "listUsers", allEntries = true)
 	public ResponseEntity<UserDto> addUser(@RequestBody @Valid UserForm form, UriComponentsBuilder uriBuilder) {
-		User newUser = form.toUser();		
+		User newUser = form.toUser();	
+		System.out.println(newUser.getPassword());
+		System.out.println(new BCryptPasswordEncoder().encode(newUser.getPassword()));
 		userRepository.save(newUser);
 		URI uri = uriBuilder.path("/users/{userId}").buildAndExpand(newUser.getId()).toUri();
 		return ResponseEntity.created(uri).body(new UserDto(newUser));
