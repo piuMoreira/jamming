@@ -38,7 +38,7 @@ public class PostForm {
 	public void setAuthor(String authorId) {
 		this.authorId = authorId;
 	}
-	public Post convert(UserRepository userRepository) {
+	public Post toPost(UserRepository userRepository) {
 		Optional<User> optional = userRepository.findById(Long.parseLong(this.authorId));
 		if(optional.isPresent()) {
 			Post post = new Post(title, message, optional.get());

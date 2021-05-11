@@ -6,6 +6,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import br.com.inatel.jamming.model.User;
 import br.com.inatel.jamming.repository.UserRepository;
@@ -13,15 +14,15 @@ import br.com.inatel.jamming.repository.UserRepository;
 public class FriendForm {
 
 	@NotNull @NotEmpty @Length(min = 5)
-	private String name;
+	private String userId;
 	@NotNull @NotEmpty @Length(min = 11)
 	private String cellphone;
 	
-	public String getName() {
-		return name;
+	public String getUserId() {
+		return userId;
 	}
-	public void setName(String name) {
-		this.name = name;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 	public String getCellphone() {
 		return cellphone;
@@ -29,12 +30,12 @@ public class FriendForm {
 	public void setCellphone(String cellphone) {
 		this.cellphone = cellphone;
 	}
-	public User convert(UserRepository userRepository) {
-		Optional<User> optional = userRepository.findByName(name);
+	public User toUser(UserRepository userRepository) {
+		Optional<User> optional = userRepository.findById(Long.parseLong(userId));
 		if(optional.isPresent()) {
 			return optional.get();
 		}
-		return null;
+		throw new UsernameNotFoundException("User not found!");
 	}
 	
 	

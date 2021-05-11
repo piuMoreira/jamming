@@ -14,7 +14,7 @@ public class Lesson extends Post {
 	private Long price;
 	@ManyToOne(cascade = CascadeType.PERSIST)
 	private Instrument instrument;
-	@ManyToMany(mappedBy = "lessons")
+	@ManyToMany(mappedBy = "boughtLessons")
 	private List<User> students = new ArrayList<User>();
 	
 	public Lesson(String title, String message, User author, long price, Instrument instrument) {

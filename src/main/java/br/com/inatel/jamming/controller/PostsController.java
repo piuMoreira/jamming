@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -25,11 +26,15 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import br.com.inatel.jamming.controller.dto.CommentDto;
 import br.com.inatel.jamming.controller.dto.PostDetailsDto;
 import br.com.inatel.jamming.controller.dto.PostDto;
+import br.com.inatel.jamming.controller.form.CommentForm;
 import br.com.inatel.jamming.controller.form.UpdatePostForm;
+import br.com.inatel.jamming.model.Comment;
 import br.com.inatel.jamming.model.Post;
 import br.com.inatel.jamming.model.User;
+import br.com.inatel.jamming.repository.CommentRepository;
 import br.com.inatel.jamming.repository.PostRepository;
 import br.com.inatel.jamming.repository.UserRepository;
 import br.com.inatel.jamming.service.cloudinary.CloudinaryService;
@@ -43,6 +48,9 @@ public class PostsController {
 	
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private CommentRepository commentRepository;
 	
 	@Autowired
 	private CloudinaryService cloudinaryService;
@@ -72,18 +80,19 @@ public class PostsController {
 	@PostMapping
 	@Transactional
 	@CacheEvict(value = "listPosts", allEntries = true)
-	public ResponseEntity<PostDto> addPost(@RequestParam("title") String title, @RequestParam("message") String message,
-								@RequestParam("userId") Long userId, UriComponentsBuilder uriBuilder,
+	public ResponseEntity<PostDto> addPost(Authentication authentication,@RequestParam("title") String title,
+								@RequestParam("message") String message, UriComponentsBuilder uriBuilder,
 								@RequestParam("file") MultipartFile file) throws IOException {
 		
-		String url = "";
+		String annexUrl = "";
 		if (file != null) {
 			Map uploadResult = cloudinaryService.upload(file, "image", "image");
-			url = uploadResult.get("public_id").toString() + "." + uploadResult.get("format").toString();
+			annexUrl = uploadResult.get("public_id").toString() + "." + uploadResult.get("format").toString();
 		}
 		
-		User user = userRepository.getOne(userId);
-		Post newPost = new Post(title, message, user, url);
+		User authUser = (User) authentication.getPrincipal();
+		User user = userRepository.getOne(authUser.getId());
+		Post newPost = new Post(title, message, user, annexUrl);
 		
 		postRepository.save(newPost);
 		URI uri = uriBuilder.path("/posts/{id}").buildAndExpand(newPost.getId()).toUri();
@@ -115,6 +124,30 @@ public class PostsController {
 			return ResponseEntity.ok().build();
 		}
 				
+		return ResponseEntity.notFound().build();
+	}
+	
+	@PostMapping("/comment")
+	@Transactional
+	public ResponseEntity<CommentDto> addCommentToPost(@RequestBody @Valid CommentForm form, UriComponentsBuilder uriBuilder) {
+			Comment comment = form.toComment(userRepository, postRepository);
+			comment.getPost().addComment(comment);
+			commentRepository.save(comment);
+			
+			URI uri = uriBuilder.path("/comments/{id}").buildAndExpand(comment.getId()).toUri();
+			return ResponseEntity.created(uri).body(new CommentDto(comment));
+		
+	}
+	
+	@DeleteMapping("/comment/{commentId}")
+	@Transactional
+	public ResponseEntity<?> deleteComment(@PathVariable Long commentId) {
+		Optional<Comment> optional = commentRepository.findById(commentId);
+		
+		if(optional.isPresent()) {
+			commentRepository.delete(optional.get());
+			return ResponseEntity.ok().build();
+		}
 		return ResponseEntity.notFound().build();
 	}
 	

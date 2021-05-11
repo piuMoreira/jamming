@@ -11,14 +11,14 @@ public class PostDto {
 	private String title;
 	private String message;
 	private LocalDateTime date;
-	private String url;
+	private String annexUrl;
 	
 	public PostDto(Post post) {
 		this.id = post.getId();
 		this.title = post.getTitle();
 		this.message = post.getMessage();
 		this.date = post.getDate();
-		this.url = post.getUrl();
+		this.annexUrl = post.getAnnexUrl();
 	}
 	
 	public Long getId() {
@@ -33,8 +33,8 @@ public class PostDto {
 	public LocalDateTime getDate() {
 		return date;
 	}	
-	public String getUrl() {
-		return url;
+	public String getAnnexUrl() {
+		return annexUrl;
 	}
 
 	public static List<PostDto> convert(List<Post> list) {

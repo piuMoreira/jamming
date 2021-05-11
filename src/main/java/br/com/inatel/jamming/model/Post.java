@@ -19,7 +19,7 @@ public class Post {
 	private String title;
 	private String message;
 	private LocalDateTime date;
-	private String url;
+	private String annexUrl;
 	@ManyToOne
 	private User author;
 	@OneToMany(mappedBy = "post")
@@ -37,7 +37,7 @@ public class Post {
 		this.message = message;
 		this.author = author;
 		this.date = LocalDateTime.now();
-		this.url = url;
+		this.annexUrl = url;
 	}
 	
 	public Post() {}
@@ -84,11 +84,12 @@ public class Post {
 	public void removeComment(Comment comment) {
 		this.comments.remove(comment);
 	}
-	public String getUrl() {
-		return url;
+	public String getAnnexUrl() {
+		return annexUrl;
 	}
-	public void setUrl(String url) {
-		this.url = url;
-	}		
+	public void setAnnexUrl(String annexUrl) {
+		this.annexUrl = annexUrl;
+	}
+		
 	
 }

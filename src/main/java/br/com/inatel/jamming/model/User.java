@@ -37,7 +37,7 @@ public class User implements UserDetails {
 	private List<Comment> comments;
 	@ManyToMany(fetch = FetchType.EAGER)
 	private List<User> friends;
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.LAZY)
 	private List<Lesson> boughtLessons;
 	
 	@ManyToMany(fetch = FetchType.EAGER)

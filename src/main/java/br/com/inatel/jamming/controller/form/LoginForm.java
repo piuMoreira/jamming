@@ -19,7 +19,7 @@ public class LoginForm {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public UsernamePasswordAuthenticationToken convert() {
+	public UsernamePasswordAuthenticationToken toToken() {
 		System.out.println(email);
 		System.out.println(password);
 		return new UsernamePasswordAuthenticationToken(email, password);

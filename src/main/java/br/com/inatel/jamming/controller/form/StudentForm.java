@@ -28,7 +28,7 @@ public class StudentForm {
 		this.cellphone = cellphone;
 	}
 	
-	public User convert(UserRepository userRepository) {
+	public User toUser(UserRepository userRepository) {
 		return userRepository.findByName(name).get();
 	}
 	

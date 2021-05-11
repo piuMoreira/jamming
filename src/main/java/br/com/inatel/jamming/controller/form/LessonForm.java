@@ -55,7 +55,7 @@ public class LessonForm {
 	public void setInstrument(String instrument) {
 		this.instrument = instrument;
 	}
-	public Lesson convert(UserRepository userRepository) {
+	public Lesson toLesson(UserRepository userRepository) {
 		Optional<User> user = userRepository.findByName(author);
 		if(user.isPresent()) {
 			long price = Long.parseLong(this.price);

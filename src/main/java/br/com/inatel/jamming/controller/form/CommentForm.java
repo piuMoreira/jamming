@@ -40,7 +40,7 @@ public class CommentForm {
 		this.postId = postId;
 	}
 
-	public Comment convert(UserRepository userRepository, PostRepository postRepository) {
+	public Comment toComment(UserRepository userRepository, PostRepository postRepository) {
 		User user = userRepository.getOne(Long.parseLong(authorId));
 		Post post = postRepository.getOne(Long.parseLong(postId));
 		

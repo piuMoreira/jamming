@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -55,10 +56,13 @@ public class LessonController {
 	}
 	
 	@GetMapping("/{lessonId}")
-	public ResponseEntity<LessonDetailsDto> lessonDetails(@PathVariable Long lessonId) {
+	public ResponseEntity<LessonDetailsDto> lessonDetails(Authentication authentication, @PathVariable Long lessonId) {
+		User authUser = (User) authentication.getPrincipal();
+		User user = userRepository.getOne(authUser.getId());
+		
 		Optional<Lesson> optional = lessonRepository.findById(lessonId);
 		
-		if(optional.isPresent()) {
+		if(optional.isPresent() && optional.get().getStudents().contains(user)) {
 			return ResponseEntity.ok(new LessonDetailsDto(optional.get()));
 		}
 		
@@ -69,7 +73,7 @@ public class LessonController {
 	@Transactional
 	@CacheEvict(value = "listLessons", allEntries = true)
 	public ResponseEntity<LessonDto> addLesson(@RequestBody @Valid LessonForm form, UriComponentsBuilder uriBuilder) {
-		Lesson lesson = form.convert(userRepository);
+		Lesson lesson = form.toLesson(userRepository);
 		lessonRepository.save(lesson);
 		
 		URI uri = uriBuilder.path("/lessons/{id}").buildAndExpand(lesson.getId()).toUri();
@@ -80,7 +84,7 @@ public class LessonController {
 	@Transactional
 	@CacheEvict(value = "listUsers", allEntries = true)
 	public ResponseEntity<?> addStudent(@RequestBody @Valid StudentForm form, @PathVariable Long lessonId) {
-		User user = form.convert(userRepository);
+		User user = form.toUser(userRepository);
 		Lesson lesson = lessonRepository.getOne(lessonId);
 		
 		if(user.getCredits() >= lesson.getPrice()) {

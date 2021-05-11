@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -57,7 +58,7 @@ public class UserController {
 	@Transactional
 	@CacheEvict(value = "listUsers", allEntries = true)
 	public ResponseEntity<UserDto> addUser(@RequestBody @Valid UserForm form, UriComponentsBuilder uriBuilder) {
-		User newUser = form.convert();		
+		User newUser = form.toUser();		
 		userRepository.save(newUser);
 		URI uri = uriBuilder.path("/users/{userId}").buildAndExpand(newUser.getId()).toUri();
 		return ResponseEntity.created(uri).body(new UserDto(newUser));
@@ -88,6 +89,46 @@ public class UserController {
 			return ResponseEntity.ok().build();
 		}
 		
+		return ResponseEntity.notFound().build();
+	}
+	
+	@GetMapping("/friend/{userId}")
+	public ResponseEntity<List<UserDto>> listFriends(@PathVariable Long userId) {
+		Optional<User> optional = userRepository.findById(userId);
+		if(optional.isPresent()) {
+			return ResponseEntity.ok(UserDto.convert(optional.get().getFriends()));
+		}
+		return ResponseEntity.notFound().build();
+	}
+	
+	@PostMapping("/friend/{userId}")
+	@Transactional
+	public ResponseEntity<UserDto> addFriend(Authentication authentication,@PathVariable Long userId){
+		
+		User authUser = (User) authentication.getPrincipal();
+		User user = userRepository.getOne(authUser.getId());
+		Optional<User> optional = userRepository.findById(userId);
+		if(optional.isPresent()) {
+			optional.get().addFriend(user);
+			user.addFriend(optional.get());
+			return ResponseEntity.ok(new UserDto(user));
+		}
+		return ResponseEntity.notFound().build();		
+	}
+	
+	@DeleteMapping("/friend/{userId}")
+	@Transactional
+	public ResponseEntity<?> deleteFriend(Authentication authentication, @PathVariable Long userId) {
+		
+		User authUser = (User) authentication.getPrincipal();
+		User user = userRepository.getOne(authUser.getId());		
+		Optional<User> optional = userRepository.findById(userId);
+		
+		if(optional.isPresent() && user.getFriends().contains(optional.get())) {
+			user.removeFriend(optional.get());
+			optional.get().removeFriend(user);
+			return ResponseEntity.ok().build();
+		}
 		return ResponseEntity.notFound().build();
 	}
 }
