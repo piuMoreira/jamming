@@ -82,7 +82,7 @@ public class PostsController {
 	@CacheEvict(value = "listPosts", allEntries = true)
 	public ResponseEntity<PostDto> addPost(Authentication authentication,@RequestParam("title") String title,
 								@RequestParam("message") String message, UriComponentsBuilder uriBuilder,
-								@RequestParam("file") MultipartFile file) throws IOException {
+								@RequestParam(value="file", required = false) MultipartFile file) throws IOException {
 		
 		String annexUrl = "";
 		if (file != null) {

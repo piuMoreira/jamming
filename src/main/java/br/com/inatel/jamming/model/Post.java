@@ -4,12 +4,16 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 public class Post {
@@ -22,7 +26,8 @@ public class Post {
 	private String annexUrl;
 	@ManyToOne
 	private User author;
-	@OneToMany(mappedBy = "post")
+	@OneToMany(mappedBy = "post", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	private List<Comment> comments = new ArrayList<Comment>();
 	
 	public Post(String title, String message, User author) {

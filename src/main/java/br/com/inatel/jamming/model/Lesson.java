@@ -12,9 +12,9 @@ import javax.persistence.ManyToOne;
 public class Lesson extends Post {
 
 	private Long price;
-	@ManyToOne(cascade = CascadeType.PERSIST)
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Instrument instrument;
-	@ManyToMany(mappedBy = "boughtLessons")
+	@ManyToMany(mappedBy = "boughtLessons" ,cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private List<User> students = new ArrayList<User>();
 	
 	public Lesson(String title, String message, User author, long price, Instrument instrument) {
