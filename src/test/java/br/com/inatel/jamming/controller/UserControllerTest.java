@@ -42,7 +42,7 @@ public class UserControllerTest {
 	}
 	
 	@Test
-	public void shouldNotCreateUserWithDuplicateEmail() throws Exception {
+	public void shouldCreateUser() throws Exception {
 		URI uri = new URI("/users");
 		String json = "{\"name\":\"Druid\","
 					+ "\"cellphone\":\"00000000000\","

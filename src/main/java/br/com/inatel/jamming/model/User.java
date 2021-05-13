@@ -39,7 +39,7 @@ public class User implements UserDetails {
 	@ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private List<User> friends;
 	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-	private List<Lesson> boughtLessons;
+	private List<Lesson> boughtLessons = new ArrayList<Lesson>();
 	
 	@ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private List<Profile> profiles = new ArrayList<>();
@@ -126,6 +126,16 @@ public class User implements UserDetails {
 	}
 	public void addBoughtLessons(Lesson boughtLessons) {
 		this.boughtLessons.add(boughtLessons);
+	}
+	public boolean buyLesson(Lesson lesson) {
+		if(this.credits >= lesson.getPrice()) {
+			this.subCredits(lesson.getPrice());
+			lesson.getAuthor().addCredits(lesson.getPrice());
+			this.boughtLessons.add(lesson);
+			lesson.addStudent(this);
+			return true;
+		}
+		return false;
 	}
 
 	@Override

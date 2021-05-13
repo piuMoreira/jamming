@@ -25,7 +25,7 @@ public class PostTest {
 	}
 	
 	@Test
-	public void shouldBeEmpty() {
+	public void commentsShouldBeEmpty() {
 		Assert.assertEquals(0, post.getComments().size());
 	}
 

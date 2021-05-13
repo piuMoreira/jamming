@@ -17,7 +17,7 @@ public class CommentRepositoryTest {
 	private CommentRepository commentRepository;
 	
 	@Test
-	public void shouldFindById() {
+	public void shouldFindCommentById() {
 		Long commentId = 2L;
 		Comment comment = commentRepository.findById(commentId).get();
 		

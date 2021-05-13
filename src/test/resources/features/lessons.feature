@@ -5,5 +5,5 @@ Feature: Lesson validation
     Given A valid Lesson
     And A User with credits
     When A User buy a lesson
-    Then The lesson add the user as a student
+    Then The lesson and the student have a relationship
 

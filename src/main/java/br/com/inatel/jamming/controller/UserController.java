@@ -60,8 +60,6 @@ public class UserController {
 	@CacheEvict(value = "listUsers", allEntries = true)
 	public ResponseEntity<UserDto> addUser(@RequestBody @Valid UserForm form, UriComponentsBuilder uriBuilder) {
 		User newUser = form.toUser();	
-		System.out.println(newUser.getPassword());
-		System.out.println(new BCryptPasswordEncoder().encode(newUser.getPassword()));
 		userRepository.save(newUser);
 		URI uri = uriBuilder.path("/users/{userId}").buildAndExpand(newUser.getId()).toUri();
 		return ResponseEntity.created(uri).body(new UserDto(newUser));

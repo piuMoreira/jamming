@@ -58,7 +58,6 @@ public class PostsController {
 	@GetMapping
 	@Cacheable(value = "listPosts")
 	public  List<PostDto> listPosts(String authorName) {
-		System.out.println("entrou");
 		if(authorName == null) {
 			List<Post> posts = postRepository.findAll();
 			return PostDto.convert(posts);

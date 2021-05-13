@@ -1,7 +1,9 @@
 package br.com.inatel.jamming.controller;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -19,7 +21,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.inatel.jamming.controller.dto.LessonDetailsDto;
@@ -27,10 +31,12 @@ import br.com.inatel.jamming.controller.dto.LessonDto;
 import br.com.inatel.jamming.controller.form.LessonForm;
 import br.com.inatel.jamming.controller.form.StudentForm;
 import br.com.inatel.jamming.controller.form.UpdateLessonForm;
+import br.com.inatel.jamming.model.Instrument;
 import br.com.inatel.jamming.model.Lesson;
 import br.com.inatel.jamming.model.User;
 import br.com.inatel.jamming.repository.LessonRepository;
 import br.com.inatel.jamming.repository.UserRepository;
+import br.com.inatel.jamming.service.cloudinary.CloudinaryService;
 
 @RestController
 @RequestMapping("/lessons")
@@ -41,6 +47,9 @@ public class LessonController {
 	
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private CloudinaryService cloudinaryService;
 	
 	
 	@GetMapping
@@ -56,24 +65,35 @@ public class LessonController {
 	}
 	
 	@GetMapping("/{lessonId}")
-	public ResponseEntity<LessonDetailsDto> lessonDetails(Authentication authentication, @PathVariable Long lessonId) {
-		User authUser = (User) authentication.getPrincipal();
-		User user = userRepository.getOne(authUser.getId());
+	public ResponseEntity<LessonDetailsDto> lessonDetails(@PathVariable Long lessonId) {
 		
 		Optional<Lesson> optional = lessonRepository.findById(lessonId);
 		
-		if(optional.isPresent() && optional.get().getStudents().contains(user)) {
+		if(optional.isPresent()) {
 			return ResponseEntity.ok(new LessonDetailsDto(optional.get()));
 		}
 		
-		return ResponseEntity.notFound().build();
+		return ResponseEntity.badRequest().build();
 	}
 	
 	@PostMapping
 	@Transactional
 	@CacheEvict(value = "listLessons", allEntries = true)
-	public ResponseEntity<LessonDto> addLesson(@RequestBody @Valid LessonForm form, UriComponentsBuilder uriBuilder) {
-		Lesson lesson = form.toLesson(userRepository);
+	public ResponseEntity<LessonDto> addLesson(Authentication authentication, @RequestParam("title") String title,
+						@RequestParam("message") String message,
+						@RequestParam("price") String price, @RequestParam("instrumentName") String instrumentName,
+				@RequestParam(value="file", required = false) MultipartFile file, UriComponentsBuilder uriBuilder) throws IOException {
+		
+		String annexUrl = "";
+		if (file != null) {
+			Map uploadResult = cloudinaryService.upload(file, "image", "image");
+			annexUrl = uploadResult.get("public_id").toString() + "." + uploadResult.get("format").toString();
+		}
+		User authUser = (User) authentication.getPrincipal();
+		User user = userRepository.getOne(authUser.getId());
+		Instrument instrument = new Instrument(instrumentName);
+		Lesson lesson = new Lesson(title, message, user, Long.parseLong(price), instrument);
+		lesson.setAnnexUrl(annexUrl);
 		lessonRepository.save(lesson);
 		
 		URI uri = uriBuilder.path("/lessons/{id}").buildAndExpand(lesson.getId()).toUri();
@@ -87,11 +107,7 @@ public class LessonController {
 		User user = form.toUser(userRepository);
 		Lesson lesson = lessonRepository.getOne(lessonId);
 		
-		if(user.getCredits() >= lesson.getPrice()) {
-				user.subCredits(lesson.getPrice());
-				lesson.getAuthor().addCredits(lesson.getPrice());
-				user.addBoughtLessons(lesson);
-				lesson.addStudent(user);
+		if(user.buyLesson(lesson)) {
 			return ResponseEntity.ok().build();
 		}
 		return ResponseEntity.badRequest().build();

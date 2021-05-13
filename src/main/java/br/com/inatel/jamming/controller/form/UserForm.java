@@ -47,7 +47,6 @@ public class UserForm {
 	public User toUser() {
 		String encryptedPassword = new BCryptPasswordEncoder().encode(password);
 		return new User(name,cellphone,email,encryptedPassword);
-//		return new User(name,cellphone,email,password);
 	}
 	
 	
