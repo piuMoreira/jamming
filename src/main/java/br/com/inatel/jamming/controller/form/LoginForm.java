@@ -20,8 +20,6 @@ public class LoginForm {
 		this.password = password;
 	}
 	public UsernamePasswordAuthenticationToken toToken() {
-		System.out.println(email);
-		System.out.println(password);
 		return new UsernamePasswordAuthenticationToken(email, password);
 	}
 	

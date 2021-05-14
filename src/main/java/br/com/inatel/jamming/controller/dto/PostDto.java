@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+
 import br.com.inatel.jamming.model.Post;
 
 public class PostDto {
@@ -38,5 +40,8 @@ public class PostDto {
 		return list.stream().map(PostDto::new).collect(Collectors.toList());
 	}
 	
+	public static Page<PostDto> convertPage(Page<Post> page) {
+		return page.map(PostDto::new);
+	}
 	
 }

@@ -11,7 +11,7 @@ import javax.persistence.ManyToOne;
 @Entity
 public class Lesson extends Post {
 
-	private Long price;
+	private long price;
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Instrument instrument;
 	@ManyToMany(mappedBy = "boughtLessons" ,cascade = { CascadeType.PERSIST, CascadeType.MERGE })

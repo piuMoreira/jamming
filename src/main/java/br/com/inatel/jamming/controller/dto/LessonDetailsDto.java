@@ -15,7 +15,7 @@ public class LessonDetailsDto {
 	private String instrumentName;
 	private LocalDateTime date;
 	private String author;
-	private Long price;
+	private long price;
 	private List<CommentDto> comments;
 	private List<UserDto> students;
 	
@@ -58,7 +58,7 @@ public class LessonDetailsDto {
 		return author;
 	}
 
-	public Long getPrice() {
+	public long getPrice() {
 		return price;
 	}
 

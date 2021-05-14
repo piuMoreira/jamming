@@ -39,7 +39,7 @@ public class UpdateUserInfoForm {
 		User user = userRepository.getOne(id);
 		user.setName(name);
 		user.setCellphone(cellphone);
-		user.setCredits(Long.parseLong(credits));
+		user.addCredits(Long.parseLong(credits));
 		return user;
 	}
 	
