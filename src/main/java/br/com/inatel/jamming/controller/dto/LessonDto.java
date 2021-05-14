@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+
 import br.com.inatel.jamming.model.Lesson;
 
 public class LessonDto {
@@ -39,6 +41,9 @@ public class LessonDto {
 		return lessons.stream().map(LessonDto::new).collect(Collectors.toList());
 	}
 	
+	public static Page<LessonDto> convertPage(Page<Lesson> page) {
+		return page.map(LessonDto::new);
+	}
 	
 	
 }

@@ -2,7 +2,6 @@ package br.com.inatel.jamming.controller;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -12,6 +11,10 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,7 +31,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.inatel.jamming.controller.dto.LessonDetailsDto;
 import br.com.inatel.jamming.controller.dto.LessonDto;
-import br.com.inatel.jamming.controller.form.LessonForm;
 import br.com.inatel.jamming.controller.form.StudentForm;
 import br.com.inatel.jamming.controller.form.UpdateLessonForm;
 import br.com.inatel.jamming.model.Instrument;
@@ -54,13 +56,14 @@ public class LessonController {
 	
 	@GetMapping
 	@Cacheable(value = "listLessons")
-	public List<LessonDto> listLessons(String instrumentName) {
+	public Page<LessonDto> listLessons(String instrumentName,
+					@PageableDefault(sort = "id", direction = Direction.ASC, page = 0, size = 10) Pageable pagination) {
 		if(instrumentName == null) {
-			List<Lesson> lessons = lessonRepository.findAll();
-			return LessonDto.convert(lessons);
+			Page<Lesson> lessons = lessonRepository.findAll(pagination);
+			return LessonDto.convertPage(lessons);
 		} else {
-			List<Lesson> lessons = lessonRepository.findByInstrumentName(instrumentName);
-			return LessonDto.convert(lessons);
+			Page<Lesson> lessons = lessonRepository.findByInstrumentName(instrumentName, pagination);
+			return LessonDto.convertPage(lessons);
 		}
 	}
 	
@@ -102,7 +105,7 @@ public class LessonController {
 	
 	@PatchMapping("/add/{lessonId}")
 	@Transactional
-	@CacheEvict(value = "listUsers", allEntries = true)
+	@CacheEvict(value = {"listUsers","listLessons"}, allEntries = true)
 	public ResponseEntity<?> addStudent(@RequestBody @Valid StudentForm form, @PathVariable Long lessonId) {
 		User user = form.toUser(userRepository);
 		Lesson lesson = lessonRepository.getOne(lessonId);
@@ -115,7 +118,7 @@ public class LessonController {
 	
 	@PatchMapping("/{lessonId}")
 	@Transactional
-	@CacheEvict(value = "listUsers", allEntries = true)
+	@CacheEvict(value = "listLessons", allEntries = true)
 	public ResponseEntity<LessonDto> updateLesson(@RequestBody @Valid UpdateLessonForm form, @PathVariable Long lessonId) {
 		Optional<Lesson> optional = lessonRepository.findById(lessonId);
 		
@@ -130,7 +133,7 @@ public class LessonController {
 	
 	@DeleteMapping("/{lessonId}")
 	@Transactional
-	@CacheEvict(value = "listUsers", allEntries = true)
+	@CacheEvict(value = "listLessons", allEntries = true)
 	public ResponseEntity<?> deleteLesson(@PathVariable Long lessonId) {
 		Optional<Lesson> optional = lessonRepository.findById(lessonId);
 		

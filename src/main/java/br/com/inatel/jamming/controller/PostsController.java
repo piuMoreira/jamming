@@ -2,7 +2,6 @@ package br.com.inatel.jamming.controller;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -12,6 +11,10 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -57,13 +60,14 @@ public class PostsController {
 	
 	@GetMapping
 	@Cacheable(value = "listPosts")
-	public  List<PostDto> listPosts(String authorName) {
+	public  Page<PostDto> listPosts(String authorName ,
+					@PageableDefault(sort = "id", direction = Direction.ASC, page = 0, size = 10) Pageable pagination) {
 		if(authorName == null) {
-			List<Post> posts = postRepository.findAll();
-			return PostDto.convert(posts);
+			Page<Post> posts = postRepository.findAll(pagination);
+			return PostDto.convertPage(posts);
 		} else {
-			List<Post> posts = postRepository.findByAuthorName(authorName);
-			return PostDto.convert(posts);
+			Page<Post> posts = postRepository.findByAuthorName(authorName, pagination);
+			return PostDto.convertPage(posts);
 		}		
 	}
 	
