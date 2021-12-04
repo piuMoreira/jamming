@@ -4,6 +4,7 @@ public class TokenDto {
 
 	private String token;
 	private String type;
+	private String status='';
 
 	public TokenDto(String token, String type) {
 		this.token = token;
