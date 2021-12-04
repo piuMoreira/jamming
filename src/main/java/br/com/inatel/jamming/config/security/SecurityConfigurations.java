@@ -1,5 +1,7 @@
 package br.com.inatel.jamming.config.security;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +16,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import br.com.inatel.jamming.repository.UserRepository;
 
@@ -44,7 +49,7 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests()
+		http.cors().and().authorizeRequests()
 		.antMatchers(HttpMethod.GET, "/users").permitAll()
 		.antMatchers(HttpMethod.GET, "/posts").permitAll()
 		.antMatchers(HttpMethod.GET, "/posts/*").permitAll()
@@ -64,5 +69,20 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
 	public void configure(WebSecurity web) throws Exception {
 		web.ignoring().antMatchers("/**.html", "/v2/api-docs", "/webjars/**", "/configuration/**", "/swagger-resources/**");
 	}
+	
+	  @Bean
+    	public CorsFilter corsFilter() {
+		CorsConfiguration corsConfig = new CorsConfiguration();
+		corsConfig.setAllowCredentials(true);
+		corsConfig.addAllowedHeader("*");
+		corsConfig.addAllowedMethod("*");
+		corsConfig.setMaxAge(3600L);
+		corsConfig.setAllowedOrigins(Arrays.asList("http://localhost:59610/"));
+
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", corsConfig);
+
+		return new CorsFilter(source);
+    	}
 	
 }
