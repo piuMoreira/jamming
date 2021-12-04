@@ -4,11 +4,12 @@ public class TokenDto {
 
 	private String token;
 	private String type;
-	private String status='';
+	private String status;
 
-	public TokenDto(String token, String type) {
+	public TokenDto(String token, String type, String status) {
 		this.token = token;
 		this.type = type;
+		this.status = status;
 	}
 
 	public String getToken() {
@@ -19,4 +20,7 @@ public class TokenDto {
 		return type;
 	}
 
+	public String getStatus() {
+		return status;
+	}
 }
